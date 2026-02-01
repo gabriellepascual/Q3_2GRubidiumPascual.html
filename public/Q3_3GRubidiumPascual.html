@@ -141,13 +141,50 @@
             element.classList.remove("invalid");
         }
     }
+
+    function saveSignup(event) {
+        event.preventDefault();
+
+        if (!confirmSubmit()) {
+            return false;
+        }
+
+        let signup = {
+            studentID: document.querySelector('[name="student_id"]').value,
+            fullName: document.querySelector('[name="full_name"]').value,
+            birthday: document.querySelector('[name="birthday"]').value,
+            email: document.querySelector('[name="email"]').value,
+            mobile: document.querySelector('[name="mobile"]').value,
+            grade: document.querySelector('[name="grade_level"]').value,
+            status: document.querySelector('input[name="status"]:checked').value,
+            club: document.querySelector('[name="club"]').value,
+            reason: document.querySelector('[name="reason"]').value
+        };
+
+        let signups = JSON.parse(localStorage.getItem("signups"));
+
+        if (!signups) {
+            signups = [];
+        }
+
+        signups.push(signup);
+        localStorage.setItem("signups", JSON.stringify(signups));
+
+        alert("Signup saved successfully!");
+        document.querySelector("form").reset();
+        return false;
+    }
+
+    function goToView() {
+        window.location.href = "viewSignUps.html";
+    }
 </script>
 </head>
 
 <body>
 
-<form method="post" action="submit"
-      onsubmit="return confirmSubmit()"
+<form method="post"
+      onsubmit="return saveSignup(event)"
       onreset="return confirmReset()">
 
     <fieldset>
@@ -230,6 +267,7 @@
     <div class="buttons">
         <button type="submit">Submit</button>
         <button type="reset">Reset</button>
+        <button type="button" onclick="goToView()">View Signups</button>
     </div>
 
 </form>
