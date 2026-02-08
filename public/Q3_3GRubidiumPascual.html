@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>HTML Form</title>
-
-<style>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Q3 3rd Graded Exercise">
+    <meta name="keywords" content="HTML Forms">
+    <meta name="author" content="Gabrielle Pascual">
+    <title>Sign Up Form</title>
+  <style>
     body {
         background-color: #2b0d0d;
         font-family: 'Poppins', sans-serif;
@@ -123,154 +126,127 @@
         background-color: #e63946;
         transform: scale(1.05);
     }
-</style>
-
+  </style>
 <script>
-    function confirmSubmit() {
-        return confirm("Are you sure you want to submit this form?");
-    }
+document.addEventListener("DOMContentLoaded", function () {
 
-    function confirmReset() {
-        return confirm("Are you sure you want to reset all information?");
-    }
+    const form = document.getElementById("dForm");
+    const resetBtn = document.querySelector("button[type='reset']");
+    const viewBtn = document.getElementById("view");
 
-    function checkEmpty(element) {
-        if (element.value.trim() === "") {
-            element.classList.add("invalid");
-        } else {
-            element.classList.remove("invalid");
-        }
-    }
-
-    function saveSignup(event) {
-        event.preventDefault();
-
-        if (!confirmSubmit()) {
-            return false;
+    form.addEventListener("submit", function (event) {
+        if (!confirm("Are you sure you want to submit this form?")) {
+            event.preventDefault();
+            return;
         }
 
-        let signup = {
-            studentID: document.querySelector('[name="student_id"]').value,
-            fullName: document.querySelector('[name="full_name"]').value,
-            birthday: document.querySelector('[name="birthday"]').value,
-            email: document.querySelector('[name="email"]').value,
-            mobile: document.querySelector('[name="mobile"]').value,
-            grade: document.querySelector('[name="grade_level"]').value,
-            status: document.querySelector('input[name="status"]:checked').value,
-            club: document.querySelector('[name="club"]').value,
-            reason: document.querySelector('[name="reason"]').value
+        let signupString = localStorage.getItem("clubsignups");
+        let signupsList = signupString ? JSON.parse(signupString) : {};
+
+        let sid = document.getElementById("sid").value;
+
+        signupsList[sid] = {
+            fname: document.getElementById("fname").value,
+            grade: document.querySelector("select[name='grade']").value,
+            semail: document.getElementById("semail").value,
+            phone: document.getElementById("phone").value,
+            inex: document.querySelector("input[name='inex']:checked") ? 
+                  document.querySelector("input[name='inex']:checked").value : "",
+            clubs: document.querySelector("select[name='clubs']").value
         };
 
-        let signups = JSON.parse(localStorage.getItem("signups"));
+        localStorage.setItem("clubsignups", JSON.stringify(signupsList));
+    });
 
-        if (!signups) {
-            signups = [];
+    resetBtn.addEventListener("click", function (event) {
+        if (!confirm("Are you sure you want to reset all information?")) {
+            event.preventDefault();
         }
+    });
 
-        signups.push(signup);
-        localStorage.setItem("signups", JSON.stringify(signups));
-
-        alert("Signup saved successfully!");
-        document.querySelector("form").reset();
-        return false;
-    }
-
-    function goToView() {
+    viewBtn.addEventListener("click", function () {
         window.location.href = "viewSignUps.html";
-    }
+    });
+
+    const inputs = document.querySelectorAll("input[required], textarea[required]");
+    inputs.forEach(function (input) {
+        input.addEventListener("blur", function () {
+            if (input.value.trim() === "") {
+                input.classList.add("invalid");
+            } else {
+                input.classList.remove("invalid");
+            }
+        });
+    });
+
+});
 </script>
-</head>
-
-<body>
-
-<form method="post"
-      onsubmit="return saveSignup(event)"
-      onreset="return confirmReset()">
-
-    <fieldset>
-        <legend>Information</legend>
-
-        <label>
-            Student ID:
-            <input type="number" name="student_id" inputmode="numeric" step="1" required>
-        </label>
-
-        <label>
-            Full Name:
-            <input type="text" name="full_name" required onblur="checkEmpty(this)">
-        </label>
-
-        <label>
-            Birthday:
-            <input type="date" name="birthday" required>
-        </label>
-
-        <label>
-            Email Address:
-            <input type="email" name="email" required>
-        </label>
-    </fieldset>
-
-    <fieldset>
-        <legend>Details</legend>
-
-        <label>
-            Mobile Phone:
-            <input type="text" name="mobile" required onblur="checkEmpty(this)">
-        </label>
-
-        <label>
-            Grade Level:
-            <select name="grade_level" required>
-                <option value="">Select</option>
-                <option value="g7">Grade 7</option>
-                <option value="g8">Grade 8</option>
-                <option value="g9">Grade 9</option>
-                <option value="g10">Grade 10</option>
-                <option value="g11">Grade 11</option>
-                <option value="g12">Grade 12</option>
+  </head>
+  <body>
+    <section>
+      <h1 class="title">Sign-up Page <br/>
+        <button type="button" id="view"> View Sign-Ups </button>
+      </h1>
+      <form id="dForm" method="get">
+        <fieldset>
+          <legend>Your Information</legend>
+          <label> Student ID: 
+            <input onfocus="changeColor(this)" onblur="resetColor(this)" type="text" name="sid" id="sid" required />
+          </label>
+          <label> FullName :
+            <input onfocus="changeColor(this)" onblur="resetColor(this)" type="text" name="fname" id="fname" required />
+          </label>
+          <label> Date Of Birth :
+            <input type="date" name="dob" id="dob" />
+          </label>
+          <label> Email :
+            <input onfocus="changeColor(this)" onblur="resetColor(this)" type="email" name="semail" id="semail" required />
+          </label>
+          <label> Mobile Phone :
+            <input onfocus="changeColor(this)" onblur="resetColor(this)" type="text" name="phone" id="phone" pattern="[0-9]{11}" placeholder="Type in your 11 digit Mobile Phone Number" required />
+          </label>
+          <label> Select Your Grade Level
+            <select name="grade">
+              <option disabled selected value> -- select an option -- </option>
+              <option value="Grade 7"> Grade 7 </option>
+              <option value="Grade 8"> Grade 8 </option>
+              <option value="Grade 9"> Grade 9 </option>
+              <option value="Grade 10"> Grade 10 </option>
+              <option value="Grade 11"> Grade 11 </option>
+              <option value="Grade 12"> Grade 12 </option>
             </select>
-        </label>
-
-        <label>
-            Intern / Extern:
+          </label>
+          <label>Intern / Extern:
             <div class="radio-group">
-                <label>
-                    <input type="radio" name="status" value="internal" required>
-                    Intern
-                </label>
-                <label>
-                    <input type="radio" name="status" value="external" required>
-                    Extern
-                </label>
+              <label>
+                <input type="radio" name="inex" value="Intern" /> Intern
+              </label>
+              <label>
+                <input type="radio" name="inex" value="Extern" /> Extern
+              </label>
             </div>
-        </label>
-
-        <label>
-            Preferred Organization / Club:
-            <select name="club" required>
-                <option value="">Select</option>
-                <option value="tech">Math Club</option>
-                <option value="arts">Atom</option>
-                <option value="sports">Exposure</option>
-                <option value="music">Karyo Biomedical Society</option>
-                <option value="volunteer">PYHS</option>
+          </label>
+          <label> Select Your Club
+            <select name="clubs">
+              <option disabled selected value> -- select an option -- </option>
+              <option value="Math Club"> Math Club </option>
+              <option value="Atom"> Atom </option>
+              <option value="Exposure"> Exposure </option>
+              <option value="Karyo Biomedical Society"> Karyo Biomedical Society </option>
+              <option value="PYHS"> PYHS </option>
             </select>
-        </label>
-
-        <label>
-            Why do you want to join?
-            <textarea name="reason" rows="4" required onblur="checkEmpty(this)"></textarea>
-        </label>
-    </fieldset>
-
-    <div class="buttons">
-        <button type="submit">Submit</button>
-        <button type="reset">Reset</button>
-        <button type="button" onclick="goToView()">View Signups</button>
-    </div>
-
-</form>
-
-</body>
+          </label>
+          <label> Why do you want to join : 
+            <textarea name="about" id="about"></textarea>
+          </label>
+        </fieldset>  
+        <fieldset>
+          <div class="buttons">
+            <button type="submit">Submit</button>
+            <button type="reset">Clear</button>
+          </div>
+        </fieldset> 
+      </form>
+    </section>
+  </body>
 </html>
